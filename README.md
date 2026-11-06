@@ -34,7 +34,9 @@ The Anthropic and Resend keys stay on the server. The browser never sees them, a
    - `RESEND_FROM`: e.g. `Kindling <kindling@forgeskillsapp.com>`. The domain must be verified in Resend.
 4. Redeploy. Every push to `main` deploys automatically after that.
 
-Optional: `MODEL` (defaults to `claude-sonnet-5-5`, set in `wrangler.toml`).
+Optional: `MODEL` (defaults to `claude-sonnet-5-5`).
+
+There's deliberately no `wrangler.toml`: with one, Cloudflare locks the dashboard's variable settings. All settings live in the dashboard.
 
 Email is optional. If `RESEND_API_KEY`/`RESEND_FROM` are missing, the app hides the email box and offers Copy instead.
 

@@ -5,9 +5,9 @@
   "description": "Find where what you love, what you're good at, and what the world needs overlap.",
   "type": "module",
   "scripts": {
-    "dev": "wrangler pages dev",
-    "dev:mock": "wrangler pages dev --binding MOCK_AI=1",
-    "deploy": "wrangler pages deploy"
+    "dev": "wrangler pages dev public --compatibility-date=2026-11-01",
+    "dev:mock": "wrangler pages dev public --compatibility-date=2026-11-01 --binding MOCK_AI=1",
+    "deploy": "wrangler pages deploy public --project-name kindling"
   },
   "devDependencies": {
     "wrangler": "^4"

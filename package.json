@@ -1,0 +1,15 @@
+{
+  "name": "kindling",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Find where what you love, what you're good at, and what the world needs overlap.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "dev:mock": "wrangler pages dev --binding MOCK_AI=1",
+    "deploy": "wrangler pages deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

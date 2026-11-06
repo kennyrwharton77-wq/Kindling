@@ -1,0 +1,8 @@
+name = "kindling"
+compatibility_date = "2026-11-01"
+pages_build_output_dir = "public"
+
+# Non-secret settings. Secrets (ANTHROPIC_API_KEY, RESEND_API_KEY, ACCESS_CODE)
+# go in the Cloudflare dashboard, or in .dev.vars for local development.
+[vars]
+MODEL = "claude-sonnet-5-5"

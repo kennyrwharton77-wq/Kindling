@@ -53,6 +53,6 @@ npm run dev:mock                 # no keys needed, canned answers
 
 - Shared access code on every API call
 - Input caps: 25 items per circle, 80 chars each, 500-char notes
-- `max_tokens`: 600 for suggestions, 3000 for analysis
+- `max_tokens`: 1000 for suggestions, 8000 for analysis
 
 For extra protection, add a Cloudflare rate-limiting rule on `/api/*` (Security → WAF → Rate limiting rules), e.g. 30 requests per minute per IP.

@@ -1,6 +1,6 @@
 // "Dig deeper": reframes the current circle's question and suggests items to add.
 import { json, handle, readBody, cleanLists, cleanCtx, claudeJSON, ORDER, HttpError } from "../../lib/shared.js";
-import { SYSTEM, suggestPrompt } from "../../lib/prompts.js";
+import { SYSTEM, suggestPrompt, SUGGEST_SCHEMA } from "../../lib/prompts.js";
 import { mockSuggest } from "../../lib/mock.js";
 
 export const onRequestPost = handle(async ({ request, env }) => {
@@ -15,7 +15,7 @@ export const onRequestPost = handle(async ({ request, env }) => {
   };
   if (env.MOCK_AI === "1") return json(mockSuggest(input));
 
-  const out = await claudeJSON(env, { system: SYSTEM, prompt: suggestPrompt(input), maxTokens: 600 });
+  const out = await claudeJSON(env, { system: SYSTEM, prompt: suggestPrompt(input), maxTokens: 1000, schema: SUGGEST_SCHEMA });
   const have = new Set(input.lists[input.circle].map((s) => s.toLowerCase()));
   return json({
     reframe: String(out.reframe || "").slice(0, 300),

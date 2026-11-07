@@ -1,6 +1,6 @@
 // Runs the full Hedgehog analysis.
 import { json, handle, readBody, cleanLists, cleanCtx, claudeJSON, ORDER, HttpError } from "../../lib/shared.js";
-import { SYSTEM, analyzePrompt } from "../../lib/prompts.js";
+import { SYSTEM, analyzePrompt, ANALYZE_SCHEMA } from "../../lib/prompts.js";
 import { mockAnalyze } from "../../lib/mock.js";
 
 const str = (v, n) => String(v ?? "").slice(0, n);
@@ -18,7 +18,7 @@ export const onRequestPost = handle(async ({ request, env }) => {
 
   const out = env.MOCK_AI === "1"
     ? mockAnalyze(input)
-    : await claudeJSON(env, { system: SYSTEM, prompt: analyzePrompt(input), maxTokens: 3000 });
+    : await claudeJSON(env, { system: SYSTEM, prompt: analyzePrompt(input), maxTokens: 8000, schema: ANALYZE_SCHEMA });
   if (!out?.hedgehog_statement) throw new HttpError(502, "Claude's answer was incomplete. Try again.");
 
   const k = out.key_items || {};

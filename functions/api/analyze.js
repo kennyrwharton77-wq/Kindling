@@ -54,14 +54,32 @@ const CAT_NAMES = {
 const CAT_MAX = { careers: 4, side_hustles: 4, volunteering: 3, hobbies: 3 };
 
 function categories(out) {
-  const c = pick(out, ["categories", "ideas", "paths"]) || out; // some replies put the lists at the top level
-  return Object.fromEntries(Object.keys(CAT_NAMES).map((id) => [id, items(pick(c, CAT_NAMES[id]), CAT_MAX[id])]));
+  const found = {};
+  // 1) top level (the current schema)  2) under a "categories"-like object  3) an array of {category, ideas}
+  const nested = pick(out, ["categories", "ideas", "paths"]);
+  for (const id of Object.keys(CAT_NAMES)) {
+    found[id] = items(pick(out, CAT_NAMES[id]), CAT_MAX[id]);
+    if (!found[id].length && nested && !Array.isArray(nested)) found[id] = items(pick(nested, CAT_NAMES[id]), CAT_MAX[id]);
+  }
+  if (Array.isArray(nested)) {
+    for (const group of nested) {
+      const label = pick(group, ["category", "name", "type", "title"]);
+      const id = Object.keys(CAT_NAMES).find((c) => CAT_NAMES[c].map(norm).includes(norm(label || "")));
+      if (id && !found[id].length) found[id] = items(pick(group, ["ideas", "items", "options", "list"]), CAT_MAX[id]);
+    }
+  }
+  return found;
 }
 
 // Claude sometimes skips key_items or uses other key names; fall back to the person's own answers.
-const KEY_NAMES = { like: ["like", "love", "love_doing", "loves"], good: ["good", "good_at", "skills"], need: ["need", "needs", "world_needs"] };
-function keyItems(k, circle, own) {
-  let v = pick(k, KEY_NAMES[circle]);
+const KEY_NAMES = {
+  like: ["key_love_doing", "love_doing", "like", "love", "loves"],
+  good: ["key_good_at", "good_at", "good", "skills"],
+  need: ["key_world_needs", "world_needs", "need", "needs"],
+};
+function keyItems(out, circle, own) {
+  let v = pick(out, KEY_NAMES[circle]);
+  if (v == null) v = pick(pick(out, ["key_items", "keyitems"]), KEY_NAMES[circle]);
   if (typeof v === "string") v = v.split(/[;,•]/);
   const picked = toArray(v).map((s) => str(s, 80).trim()).filter(Boolean).slice(0, 3);
   return picked.length ? picked : own.slice(0, 3);
@@ -72,7 +90,7 @@ export const onRequestPost = handle(async ({ request, env }) => {
   const input = { name: body.name, lists: cleanLists(body.lists), ctx: cleanCtx(body.ctx) };
   if (ORDER.some((k) => input.lists[k].length < 1)) throw new HttpError(400, "Each circle needs at least one item.");
 
-  let result;
+  let result, lastRaw = "";
   for (let attempt = 0; attempt < 2; attempt++) {
     const raw = env.MOCK_AI === "1"
       ? mockAnalyze(input)
@@ -85,13 +103,15 @@ export const onRequestPost = handle(async ({ request, env }) => {
       hedgehog_statement: str(statement, 300),
       explanation: str(pick(out, ["explanation", "why"]), 1000),
       first_move: str(pick(out, ["first_move", "firstmove", "next_move"]), 400),
-      key_items: Object.fromEntries(ORDER.map((x) => [x, keyItems(pick(out, ["key_items", "keyitems"]), x, input.lists[x])])),
+      key_items: Object.fromEntries(ORDER.map((x) => [x, keyItems(out, x, input.lists[x])])),
       categories: categories(out),
     };
     const ideaCount = Object.values(result.categories).reduce((n, a) => n + a.length, 0);
     if (ideaCount > 0) return json(result);
-    console.error("No ideas parsed; raw shape:", JSON.stringify(raw).slice(0, 1500));
+    lastRaw = JSON.stringify(raw);
+    console.error("No ideas parsed; raw shape:", lastRaw.slice(0, 1500));
   }
-  if (result) return json(result); // statement but no ideas after two tries: still show what we have
+  // Statement but no ideas after two tries: still show what we have, plus what Claude sent, for debugging.
+  if (result) return json({ ...result, debug: lastRaw.slice(0, 700) });
   throw new HttpError(502, "Claude's answer was incomplete. Try again.");
 });

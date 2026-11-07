@@ -203,7 +203,7 @@ function resultsView() {
         <h3>${esc(i.title)}</h3>
         <div class="why">${esc(i.why)}</div>
         ${(i.steps || []).length ? `<ol>${i.steps.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
-      </div>`).join("") || `<p class="muted">No ideas in this category.</p>`}
+      </div>`).join("") || `<p class="muted">No ideas in this category. Tap “Edit my answers”, then run it again.</p>${r.debug ? `<details class="small muted"><summary>Details for Kenny</summary><code style="word-break:break-all">${esc(r.debug)}</code></details>` : ""}`}
   </div>
 
   <div class="card">

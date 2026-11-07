@@ -1,7 +1,7 @@
 "use strict";
 
 const CIRCLES = {
-  like: { label: "What do you love doing?", short: "Love", color: "var(--like)", soft: "var(--like-soft)",
+  like: { label: "What do you love doing?", short: "Love doing", color: "var(--like)", soft: "var(--like-soft)",
           help: "Things that energize you, the stuff you'd do even if nobody paid you." },
   good: { label: "What are you good at?", short: "Good at", color: "var(--good)", soft: "var(--good-soft)",
           help: "Skills, strengths, things people come to you for. Be honest, not modest." },
@@ -60,7 +60,7 @@ function vennSVG({ small = false, busy = false } = {}) {
   <circle class="ring o1 orb" cx="116" cy="112" r="86"/>
   <circle class="ring o2 orb" cx="204" cy="112" r="86"/>
   <circle class="ring o3 orb" cx="160" cy="190" r="86"/>
-  <text class="lbl" x="82" y="82" text-anchor="middle">Love</text>
+  <text class="lbl" x="80" y="82" text-anchor="middle">Love doing</text>
   <text class="lbl" x="238" y="82" text-anchor="middle">Good at</text>
   <text class="lbl" x="160" y="250" text-anchor="middle">World needs</text>
   <circle class="halo" cx="160" cy="140" r="42" fill="url(#gHalo)"/>

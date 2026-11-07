@@ -49,8 +49,11 @@ export const onRequestPost = handle(async ({ request, env }) => {
     body: JSON.stringify({ from: env.RESEND_FROM, to: [to], subject: "Your Hedgehog — Kindling", html }),
   });
   if (!res.ok) {
-    console.error("Resend error", res.status, (await res.text().catch(() => "")).slice(0, 500));
-    throw new HttpError(502, "The email didn't go through. Try again.");
+    const detail = await res.text().catch(() => "");
+    console.error("Resend error", res.status, detail.slice(0, 500));
+    let msg = "";
+    try { msg = JSON.parse(detail)?.message || ""; } catch {}
+    throw new HttpError(502, `Email failed (Resend ${res.status})${msg ? ": " + msg.slice(0, 250) : "."}`);
   }
   return json({ ok: true });
 });

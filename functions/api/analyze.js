@@ -11,6 +11,17 @@ const items = (arr, max) =>
     steps: (Array.isArray(i?.steps) ? i.steps : []).slice(0, 4).map((s) => str(s, 300)),
   })).filter((i) => i.title);
 
+
+// Claude sometimes skips key_items or uses other key names; fall back to the person's own answers.
+const ALIASES = { like: ["like", "love", "love_doing", "loves"], good: ["good", "good_at", "skills"], need: ["need", "needs", "world_needs"] };
+function keyItems(k, circle, own) {
+  let v;
+  for (const name of ALIASES[circle]) if (k[name] != null) { v = k[name]; break; }
+  if (typeof v === "string") v = v.split(/[;,•]/);
+  const picked = (Array.isArray(v) ? v : []).map((s) => str(s, 80).trim()).filter(Boolean).slice(0, 3);
+  return picked.length ? picked : own.slice(0, 3);
+}
+
 export const onRequestPost = handle(async ({ request, env }) => {
   const body = await readBody(request);
   const input = { name: body.name, lists: cleanLists(body.lists), ctx: cleanCtx(body.ctx) };
@@ -27,7 +38,7 @@ export const onRequestPost = handle(async ({ request, env }) => {
     hedgehog_statement: str(out.hedgehog_statement, 300),
     explanation: str(out.explanation, 1000),
     first_move: str(out.first_move, 400),
-    key_items: Object.fromEntries(ORDER.map((x) => [x, (Array.isArray(k[x]) ? k[x] : []).slice(0, 3).map((s) => str(s, 80))])),
+    key_items: Object.fromEntries(ORDER.map((x) => [x, keyItems(k, x, input.lists[x])])),
     categories: {
       careers: items(c.careers, 4),
       side_hustles: items(c.side_hustles, 4),

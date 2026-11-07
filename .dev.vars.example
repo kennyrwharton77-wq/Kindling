@@ -2,6 +2,6 @@
 ANTHROPIC_API_KEY=sk-ant-...
 ACCESS_CODE=campfire
 RESEND_API_KEY=re_...
-RESEND_FROM=Kindling <kindling@forgeskillsapp.com>
+RESEND_FROM=Kindling <kindling@mail.forgeskillsapp.com>
 # Set to 1 to run without calling Claude or Resend (canned answers).
 MOCK_AI=0

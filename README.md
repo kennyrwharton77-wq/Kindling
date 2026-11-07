@@ -31,7 +31,7 @@ The Anthropic and Resend keys stay on the server. The browser never sees them, a
    - `ANTHROPIC_API_KEY`: from console.anthropic.com
    - `ACCESS_CODE`: the word you'll give friends (not case-sensitive)
    - `RESEND_API_KEY`: from resend.com
-   - `RESEND_FROM`: e.g. `Kindling <kindling@forgeskillsapp.com>`. The domain must be verified in Resend.
+   - `RESEND_FROM`: e.g. `Kindling <kindling@mail.forgeskillsapp.com>`. The domain must be verified in Resend.
 4. Redeploy. Every push to `main` deploys automatically after that.
 
 Optional: `MODEL` (defaults to `claude-sonnet-5-5`).
